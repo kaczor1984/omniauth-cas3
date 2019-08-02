@@ -50,7 +50,13 @@ module OmniAuth
               unless e.kind_of?(Nokogiri::XML::Text) || node_name == 'proxies'
                 # There are no child elements
                 if e.element_children.count == 0
-                  hash[node_name] = e.content
+                  if !hash[node_name].is_a?(Array)
+                    hash[node_name].push(e.content)
+                  elsif hash[node_name].is_a?(String)
+                    hash[node_name] = [hash[node_name], e.content]
+                  else
+                    hash[node_name] = e.content
+                  end
                 elsif e.element_children.count
                   # JASIG style extra attributes
                   if node_name == 'attributes'
